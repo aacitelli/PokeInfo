@@ -11,6 +11,11 @@
 /* Essentially gets applied to all screen widths */
 @media only screen and (min-width : 320px) 
 {
+    #siteTitle
+    {
+        margin: 50px 0;
+    }
+    
     #introContainer > img, #introContainer div
     {
         display: inline;
@@ -18,7 +23,7 @@
 
     #pokemonName, #pokemonDescription
     {
-        display: block;
+        display: inline-block;
     }
 
     #centerColumn
