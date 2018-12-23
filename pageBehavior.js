@@ -98,3 +98,9 @@ function setFlavorText(pokemonData, speciesData)
     // Setting DOm element to be that 
     document.getElementById("pokemonDescription").textContent = flavorText;
 }
+
+// This button just calls the retrieval function again
+document.getElementById("randomizeButton").addEventListener("click", function()
+{
+    getRandomPokemon();
+});
