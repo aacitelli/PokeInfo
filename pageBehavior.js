@@ -56,3 +56,9 @@ function updatePage(pokemonData, speciesData)
     console.log("Pokemon Data: " + pokemonData);
     console.log("Species Data: " + speciesData);
 }
+
+document.addEventListener("DOMContentLoaded")
+{
+    let mainColumn = document.getElementById("middleColumn");
+    let sideColumn = document.querySelectorAll(".sideColumn");
+}
