@@ -29,6 +29,7 @@
     {
         width: 100%;        
         margin: 10px 0;
+        padding: 10px;
     }
 
     .column
@@ -42,6 +43,31 @@
     {
         text-align: center;
         margin-top: 40px;
+    }
+
+    #introContainer
+    {
+        margin-top: 40px;
+        overflow: auto;
+        clear: both;
+    }
+
+    #introContainer > img, #introContainer > div 
+    {
+        float: left;
+    }
+
+    #pokemonImage
+    {
+        min-width: 200px;
+        min-height: 200px;
+
+        border: 5px solid black;
+    }
+
+    #nameDescriptContainer
+    {
+        padding-left: 10px;
     }
 }
 

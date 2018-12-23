@@ -50,15 +50,53 @@ function getRandomPokemon()
     });
 }
 
+// This is heavily methodized because otherwise it would be one long mess 
 function updatePage(pokemonData, speciesData)
 {
-    console.log("Update Page Function: ");
-    console.log("Pokemon Data: " + pokemonData);
-    console.log("Species Data: " + speciesData);
+    /* All the function calls that set up the page based on the given JSON data.
+        The role of most of these should be apparent by the name. */
+
+    setPicture();
+    setName();
+    setFlavorText();
 }
 
-document.addEventListener("DOMContentLoaded")
+// Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
+function setPicture(pokemonData, speciesData)
 {
-    let mainColumn = document.getElementById("middleColumn");
-    let sideColumn = document.querySelectorAll(".sideColumn");
+    // Todo - Figure out a way to get a higher resolution picture
+    document.getElementById("pokemonImage").src = pokemonData.sprites.front_default;    
+}
+
+function setName(pokemonData, speciesData)
+{
+    // Getting name from retrieved JSON data 
+    let pokemonName = pokemonData.forms[0].name;
+
+    // Capitalizing first letter
+    pokemonName = pokemonName.slice(0, 1).toUpperCase() + pokemonName.slice(1, pokemonName.length);
+    
+    // Setting DOM element to be that 
+    document.getElementById("pokemonName").textContent = pokemonName;
+}
+
+function setFlavorText(pokemonData, speciesData)
+{
+    // Todo - Figure out a way of doing this w/o searching through until you find the english one 
+    let flavorText, flag = false, currIndex = 0;
+
+    // Getting the english version of the flavor text 
+    while (!flag)
+    {
+        if (speciesData.flavor_text_entries[currIndex].language.name === "en")
+        {
+            flavorText = speciesData.flavor_text_entries[currIndex].flavor_text;
+            flag = true;
+        }
+
+        currIndex++; 
+    }
+    
+    // Setting DOm element to be that 
+    document.getElementById("pokemonDescription").textContent = flavorText;
 }
