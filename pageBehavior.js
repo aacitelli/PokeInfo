@@ -6,59 +6,53 @@ document.addEventListener("DOMContentLoaded", function()
 
 function getRandomPokemon()
 {
-    // Original range is [0, 802) -> [0, 801] (b/c of floor) so we add 1 to get to [1, 802]
+    // Total # of pokemon in database
     let pokemonNum = Math.floor(Math.random() * 802 + 1);
 
-    let pokemonData; // Holds the 
-    let speciesData;
-
+    console.log("JSON File 1 URL: " + "https://pokeapi.co/api/v2/pokemon/" + pokemonNum + "/")
     // Getting the pokemon data 
-    fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonNum + "/")
-    
-    // After the data is fetched, this returns the HTTP response
+    fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonNum + "/")    
     .then(function(response)
     {
-        console.log("Got Pokemon Response.");
-        return response.json();
-    })
-    
-    // If the first data was obtained successfully
-    .then(function(pokemonData)
-    {
-        /* Chaining another set of data on b/c the first was successful and we 
-            need the first set to get the url for the second set programmatically */
-        console.log("Got Data 1.");
-
-        // Gets the species data - THis just chains b/c the original was successful
-        fetch(pokemonData.species.url).then(function(response)
+        if (!response.ok)
         {
-            console.log("Got Species Response.")
+            console.log("Pokemon Response: Fail. Throwing error.");
+            throw new Error("HTTP Error " + response.status);
+        }
+
+        return response.json();
+    })    
+    .then(function(pokemonData)
+    {        
+        fetch(pokemonData.species.url)
+        .then(function(response)
+        {
+            if (!response.ok)
+            {
+                console.log("Species Response: Fail. Throwing error.");
+            }
+
             return response.json();
         })
-        
-        .then(function(data)
+        .then(function(speciesData)
         {
-            console.log("Got species Data.");
-            speciesData = data;
-
             // Both of these objects are full of data, so can be passed
             updatePage(pokemonData, speciesData);
         })
-        
         .catch(function(err)
         {
-            console.log("Failed to fetch species data.");
+            console.log("Failed to fetch species data. Error: " + err);
         });
     })
-    
-    // If there was an error with getting the first set of data 
     .catch(function(err)
     {
-        console.log("Failed to fetch pokemon data.");
+        console.log("Failed to fetch pokemon data. Error: " + err);
     });
 }
 
 function updatePage(pokemonData, speciesData)
 {
-
+    console.log("Update Page Function: ");
+    console.log("Pokemon Data: " + pokemonData);
+    console.log("Species Data: " + speciesData);
 }
