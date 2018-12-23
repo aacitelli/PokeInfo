@@ -50,15 +50,13 @@ function getRandomPokemon()
     });
 }
 
-// This is heavily methodized because otherwise it would be one long mess 
+// This is heavily methodized because otherwise it would be one long mess and it's far easier to debug this way
 function updatePage(pokemonData, speciesData)
 {
-    /* All the function calls that set up the page based on the given JSON data.
-        The role of most of these should be apparent by the name. */
-
-    setPicture();
-    setName();
-    setFlavorText();
+    /* All the function calls that set up the page based on the given JSON data. */
+    setPicture(pokemonData, speciesData);
+    setName(pokemonData, speciesData);
+    setFlavorText(pokemonData, speciesData);
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 

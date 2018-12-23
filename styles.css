@@ -68,6 +68,12 @@
     #nameDescriptContainer
     {
         padding-left: 10px;
+        width: calc(100% - 220px);
+    }
+    
+    #pokemonDescription
+    {
+        overflow: auto;
     }
 }
 
@@ -89,7 +95,6 @@
     {
         width: 80%;
     }
-
 }
 
 /* Medium Devices, Desktops */
