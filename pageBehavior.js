@@ -7,10 +7,10 @@ document.addEventListener("DOMContentLoaded", function()
 // Todo - Make this a single function with "modes" or smth like that 
 // Todo - Make this spit out if no pokemon matches whatever got put in by the user 
 // Same as the randomized one but uses 
-function getPokemon(inputStr)
+function getPokemon(input)
 {
     // Getting the pokemon data 
-    fetch("https://pokeapi.co/api/v2/pokemon/" + inputStr + "/")    
+    fetch("https://pokeapi.co/api/v2/pokemon/" + input + "/")    
     .then(function(response)
     {
         if (!response.ok)
@@ -105,6 +105,7 @@ function updatePage(pokemonData, speciesData)
     setPicture(pokemonData, speciesData);
     setName(pokemonData, speciesData);
     setFlavorText(pokemonData, speciesData);
+    setMoves(pokemonData, speciesData);
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
@@ -117,7 +118,7 @@ function setPicture(pokemonData, speciesData)
 function setName(pokemonData, speciesData)
 {
     // Getting name from retrieved JSON data 
-    let pokemonName = pokemonData.forms[0].name;
+    let pokemonName = pokemonData.name;
 
     // Capitalizing first letter
     pokemonName = pokemonName.slice(0, 1).toUpperCase() + pokemonName.slice(1, pokemonName.length);
@@ -145,6 +146,12 @@ function setFlavorText(pokemonData, speciesData)
     
     // Setting DOm element to be that 
     document.getElementById("pokemonDescription").textContent = flavorText;
+}
+
+function setMoves(pokemonData, currIndex)
+{
+    // Getting a list of moves from the JSON object
+    
 }
 
 // This button just calls the retrieval function again
