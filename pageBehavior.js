@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function()
 });
 
 // Todo - Make this a single function with "modes" or smth like that 
+// Todo - Make this spit out if no pokemon matches whatever got put in by the user 
 // Same as the randomized one but uses 
 function getPokemon(inputStr)
 {
@@ -45,6 +46,8 @@ function getPokemon(inputStr)
     .catch(function(err)
     {
         console.log("Failed to fetch pokemon data. Error: " + err);
+        document.getElementById("pokemonName").textContent = "No Pokemon With That Name Found.";
+        document.getElementById("pokemonDescription").textContent = "";
     });
 }
 
@@ -88,8 +91,10 @@ function getRandomPokemon()
         });
     })
     .catch(function(err)
-    {
+    {                
         console.log("Failed to fetch pokemon data. Error: " + err);
+        document.getElementById("pokemonName").textContent = "No Pokemon With That Name Found.";
+        document.getElementById("pokemonDescription").textContent = "";
     });
 }
 
