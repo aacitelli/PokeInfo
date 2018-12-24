@@ -6,9 +6,9 @@
 
     /* Basically Slate Gray */
     background-color: #708090;
+
+    box-sizing: border-box;
 }
-
-
 
 /* Gets applied to essentially everything, so this is where universal code goes.
     it's just easier for me to read if it's all in a code block and it's 
@@ -77,12 +77,26 @@
         overflow: auto;
     }
 
-    #randomizeButton
+    #selectionContainer 
+    {
+        background-color: green;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    #selectionContainer > button
     {
         background: white;
         border: 1px black solid;
         padding: 10px;
         text-align: center;
+    }
+
+    #selectionContainer > input 
+    {
+        background: white;
+        padding: 10px;
+        width: 400px;
     }
 }
 
