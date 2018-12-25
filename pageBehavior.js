@@ -122,7 +122,6 @@ function setMoves(pokemonData, speciesData)
     for (let i = 0; i < pokemonData.moves.length; i++)
     {
         movesList.push(pokemonData.moves[i].move.name);
-        console.log("Current Move Name: " + pokemonData.moves[i].move.name);
     }
 
     /* Adding them onto the DOM list */
@@ -141,6 +140,95 @@ function setMoves(pokemonData, speciesData)
         newListElement.classList.toggle("possibleMove");
         listHeader.appendChild(newListElement);
     }
+}
+
+/* Todo - Rewrite anything relevant to only fetch data if it's needed */
+function setAbilities(pokemonData, speciesData)
+{
+    // Utilized for organizational reasons mostly (slight performance hit but helps readability)
+    let name, isHidden;
+
+    // Iterates through each ability and adds it to the page 
+    // Accounts for if the pokemon has zero abilities too 
+    for (let i = 0; i < pokemonData.abilities.length; i++)
+    {
+        name = pokemonData.abilities[i].ability.name;
+        isHidden = pokemonData.abilities[i].is_hidden;
+
+        // Gets and sets the data from the ability
+        getSetAbilityData(pokemonData.abilities[i].ability.url, isHidden, name);
+    }
+}
+
+// This function gets the data from the API and then sets the relevant on-page elements using the DOM 
+function getSetAbilityData(url, isHidden, name)
+{
+    fetch(url)
+    .then(function(response)
+    {
+        if (!response.ok)
+        {
+            console.log("Malformed response from server in getAbilityData.");
+        }
+
+        return response.json();
+    })
+    .then(function(data)
+    {
+        /* 
+            This is my solution to not being able to return something to the parent function from a child function.
+
+            Basically, every piece of API data you'd get has a "get" and "set", where "get" is the actual api call
+            and set is actually setting the data on the page 
+        */
+        setAbilityData(data, isHidden, name);
+    })
+    .catch(function(err)
+    {
+        console.log("Error getting data from getAbilityData. Error: " + err);
+    })
+}
+
+// Appends a single ability and its information to the page 
+function setAbilityData(abilityData, isHidden, name)
+{
+    // Getting the parent element that it'll be appended to 
+    // Todo - Pass this through so that it doesn't need done for each ability 
+    let parent = document.getElementById("abilitiesContainer");
+
+    // Initializing HTML elements
+    let title = document.createElement("h3");
+    let description = document.createElement("p3");
+    let hiddenText;
+
+    // If it's hidden, adjust some formatting
+    if (isHidden)
+    {
+        title.style.display = "inline";
+
+        hiddenText = "(Hidden)";
+        hiddenText.style.fontWeight = "bold";       
+    }    
+
+    // Giving them the correct text 
+    title = name;
+    
+    let flag = false, i = 0;
+
+    do 
+    {
+        if (abilityData.flavor_text_entries[i].language.name === "en")
+        {
+            description = abilityData.flavor_text_entries[i].flavor_text;
+            flag = true;
+        }
+
+    } while(!flag);
+
+    // Actually putting them on the page 
+    parent.appendChild(title);
+    parent.appendChild(hiddenText);
+    parent.appendChild(description);
 }
 
 // This button just calls the retrieval function again
