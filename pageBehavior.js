@@ -128,8 +128,7 @@ function setMoves(pokemonData, speciesData)
     {
         let newListElement = document.createElement("li");
         newListElement.textContent = movesList[i];
-        newListElement.style.display = "inline-block";
-        newListElement.style.margin = "0 5px";
+        newListElement.classList.toggle("possibleMove");
         listHeader.appendChild(newListElement);
     }
 }
