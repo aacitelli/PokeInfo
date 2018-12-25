@@ -38,6 +38,11 @@
         margin: 20px 0;
     }
 
+    #selectionContainer
+    {
+        width: 100%;
+    }
+
     .column
     {
         float: left;
@@ -91,17 +96,24 @@
 
     #selectionContainer > button
     {
+        display: inline-block;
         background: white;
         border: 1px black solid;
         padding: 10px;
-        text-align: center;        
+        text-align: center;     
+        width: 100px;   
     }
 
     #selectionContainer > input 
     {
+        display: inline-block;
         background: white;
+        border: 1px black solid;
         padding: 10px;
-        width: 500px;
+
+        /* Todo - Figure out why I need the 4px here */
+        width: calc(100% - 100px - 4px); 
+        height:        
     }
 
     .possibleMove
