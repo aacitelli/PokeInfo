@@ -1,16 +1,21 @@
 // Wait until content is loaded (sort of just as a precaution at this point)
 document.addEventListener("DOMContentLoaded", function()
 {
-    getRandomPokemon();
+    getPokemon("random");
 });
 
-// Todo - Make this a single function with "modes" or smth like that 
-// Todo - Make this spit out if no pokemon matches whatever got put in by the user 
-// Same as the randomized one but uses 
+// Two Modes - "Random" as input returns a random pokemon. Anything else signifies a specific name 
 function getPokemon(input)
 {
+    let searchQuery = input;
+
+    if (input.toLowerCase() ===  "random")
+    {
+        searchQuery = Math.floor(Math.random() * 802 + 1).toString();
+    }
+
     // Getting the pokemon data 
-    fetch("https://pokeapi.co/api/v2/pokemon/" + input + "/")    
+    fetch("https://pokeapi.co/api/v2/pokemon/" + searchQuery + "/")    
     .then(function(response)
     {
         if (!response.ok)
@@ -45,53 +50,6 @@ function getPokemon(input)
     })
     .catch(function(err)
     {
-        console.log("Failed to fetch pokemon data. Error: " + err);
-        document.getElementById("pokemonName").textContent = "No Pokemon With That Name Found.";
-        document.getElementById("pokemonDescription").textContent = "";
-    });
-}
-
-function getRandomPokemon()
-{
-    // Total # of pokemon in database
-    let pokemonNum = Math.floor(Math.random() * 802 + 1);
-
-    // Getting the pokemon data 
-    fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonNum + "/")    
-    .then(function(response)
-    {
-        if (!response.ok)
-        {
-            console.log("Pokemon Response: Fail. Throwing error.");
-            throw new Error("HTTP Error " + response.status);
-        }
-
-        return response.json();
-    })    
-    .then(function(pokemonData)
-    {        
-        fetch(pokemonData.species.url)
-        .then(function(response)
-        {
-            if (!response.ok)
-            {
-                console.log("Species Response: Fail. Throwing error.");
-            }
-
-            return response.json();
-        })
-        .then(function(speciesData)
-        {
-            // Both of these objects are full of data, so can be passed
-            updatePage(pokemonData, speciesData);
-        })
-        .catch(function(err)
-        {
-            console.log("Failed to fetch species data. Error: " + err);
-        });
-    })
-    .catch(function(err)
-    {                
         console.log("Failed to fetch pokemon data. Error: " + err);
         document.getElementById("pokemonName").textContent = "No Pokemon With That Name Found.";
         document.getElementById("pokemonDescription").textContent = "";
@@ -148,16 +106,30 @@ function setFlavorText(pokemonData, speciesData)
     document.getElementById("pokemonDescription").textContent = flavorText;
 }
 
-function setMoves(pokemonData, currIndex)
+function setMoves(pokemonData, speciesData)
 {
     // Getting a list of moves from the JSON object
-    
+    let movesList;
+    let numMoves = pokemonData.moves[0].length;
+    for (let i = 0; i < numMoves; i++)
+    {
+        movesList.push(pokemonData.moves[0].move.name);
+    }
+
+    // Adding them onto the DOM list 
+    let listHeader = document.getElementById("skillsList");
+    for (let i = 0; i < movesList.length; i++)
+    {
+        let newListElement = document.createElement("li");
+        newListElement.textContent = movesList[i];
+        listHeader.appendChild(newListElement);
+    }
 }
 
 // This button just calls the retrieval function again
 document.getElementById("randomizeButton").addEventListener("click", function()
 {
-    getRandomPokemon();
+    getPokemon("random");
 });
 
 // Fired when ANY key is pressed  
