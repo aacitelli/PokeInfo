@@ -25,18 +25,18 @@ function getPokemon(input)
         }
 
         return response.json();
-    })    
+    })
     .then(function(pokemonData)
     {        
         fetch(pokemonData.species.url)
-        .then(function(response)
+        .then(function(response2)
         {
-            if (!response.ok)
+            if (!response2.ok)
             {
                 console.log("Species Response: Fail. Throwing error.");
             }
 
-            return response.json();
+            return response2.json();
         })
         .then(function(speciesData)
         {
@@ -50,16 +50,15 @@ function getPokemon(input)
     })
     .catch(function(err)
     {
-        console.log("Failed to fetch pokemon data. Error: " + err);
-        document.getElementById("pokemonName").textContent = "No Pokemon With That Name Found.";
-        document.getElementById("pokemonDescription").textContent = "";
+        document.getElementById("pokemonName").textContent = "";
+        document.getElementById("pokemonDescription").textContent = "No Pokemon With That Name Found. Please revise your search.    ";
     });
 }
 
 // This is heavily methodized because otherwise it would be one long mess and it's far easier to debug this way
 function updatePage(pokemonData, speciesData)
 {
-    /* All the function calls that set up the page based on the given JSON data. */
+    /* All the function calls that set up the page based on the passed-in JSON data. */
     setPicture(pokemonData, speciesData);
     setName(pokemonData, speciesData);
     setFlavorText(pokemonData, speciesData);
@@ -109,19 +108,28 @@ function setFlavorText(pokemonData, speciesData)
 function setMoves(pokemonData, speciesData)
 {
     // Getting a list of moves from the JSON object
-    let movesList;
-    let numMoves = pokemonData.moves[0].length;
-    for (let i = 0; i < numMoves; i++)
+    let movesList = [], numMoves = pokemonData.moves[0].length;
+    for (let i = 0; i < pokemonData.moves.length; i++)
     {
-        movesList.push(pokemonData.moves[0].move.name);
+        movesList.push(pokemonData.moves[i].move.name);
+        console.log("Current Move Name: " + pokemonData.moves[i].move.name);
     }
 
-    // Adding them onto the DOM list 
+    /* Adding them onto the DOM list */
     let listHeader = document.getElementById("skillsList");
+    
+    // Removes the previous moves from the list 
+    while (listHeader.firstChild)
+    {
+        listHeader.removeChild(listHeader.firstChild);
+    }
+
     for (let i = 0; i < movesList.length; i++)
     {
         let newListElement = document.createElement("li");
         newListElement.textContent = movesList[i];
+        newListElement.style.display = "inline-block";
+        newListElement.style.margin = "0 5px";
         listHeader.appendChild(newListElement);
     }
 }
