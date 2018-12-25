@@ -63,6 +63,7 @@ function updatePage(pokemonData, speciesData)
     setName(pokemonData, speciesData);
     setFlavorText(pokemonData, speciesData);
     setMoves(pokemonData, speciesData);
+    setWidthHeight(pokemonData, speciesData);
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
@@ -103,6 +104,15 @@ function setFlavorText(pokemonData, speciesData)
     
     // Setting DOm element to be that 
     document.getElementById("pokemonDescription").textContent = flavorText;
+}
+
+function setWidthHeight(pokemonData, speciesData)
+{
+    // Setting width
+    document.getElementById("weightText").innerText = "Weight: " + pokemonData.weight + " hectograms";
+
+    // Setting height
+    document.getElementById("heightText").innerText = "Height: " + pokemonData.height + " decimeters"; 
 }
 
 function setMoves(pokemonData, speciesData)
