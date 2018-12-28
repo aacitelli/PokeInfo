@@ -16,6 +16,9 @@ function getPokemon(input)
         searchQuery = Math.floor(Math.random() * 802 + 1).toString();
     }
     
+    let pokemonDataOK = true;
+
+    // Getting pokemon data 
     // Debug
     console.log("Getting pokemon data from URL: " + "https://pokeapi.co/api/v2/pokemon/" + searchQuery + "/");
 
@@ -33,11 +36,24 @@ function getPokemon(input)
 
         return pokemonDataResponse.json();
     })
-
     .then(function(pokemonData)
     {        
         updatePokemonData(pokemonData);
 
+        
+    })    
+    .catch(function(err)
+    {
+        // Todo - Figure out how to only enter this catch if there's an error with the pokemon data and not other stuff nested in here 
+        console.log("Catch of pokemonData retrieval entered. Error: " + err);
+        document.getElementById("pokemonName").textContent = "Pokemon Not Found.";
+        document.getElementById("pokemonDescription").textContent = "Please revise your search.";
+    });
+    
+    // Getting data that's dependent on the pokemon data
+    // I'm not nesting this because that makes error reporting a lot harder 
+    if (pokemonDataOK)
+    {
         // Debug
         console.log("Getting species data from URL: " + pokemonData.species.url);
 
@@ -64,13 +80,11 @@ function getPokemon(input)
             console.log("Failed to fetch species data. Error: " + err);
         });
 
-        // Debug
-        
         // Getting the data for each ability and calling the ability update function for each
         for (let i = 0; i < pokemonData.abilities.length; i++)
         {
             // Debug 
-            console.log("Getting move data from URL: " + pokemonData.abilities[i].move.url);
+            console.log("Getting ability data from URL: " + pokemonData.abilities[i].move.url);
 
             fetch(pokemonData.abilities[i].move.url)
             .then(function(abilityDataResponse)
@@ -91,14 +105,8 @@ function getPokemon(input)
             {
                 console.log("Failed to fetch ability data. Error: " + err);
             });
-        }
-    })
-    
-    .catch(function(err)
-    {
-        document.getElementById("pokemonName").textContent = "";
-        document.getElementById("pokemonDescription").textContent = "No Pokemon With That Name Found. Please revise your search.    ";
-    });
+        }   
+    }
 }
 
 // Updates any fields that use pokemonData 
@@ -121,14 +129,6 @@ function updateAbilityData(abilityData)
     // setAbilityData(abilityData);
 }
 
-function setAbilityData(abilityData)
-{
-    // Reminder - This entire function is run once for each ability present, so this is tailored to just one ability
-    let parent = document.getElementById("abilitiesContainer");
-
-    let title = abilityData
-}
-
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
 function setPicture(pokemonData, speciesData)
 {
@@ -138,6 +138,9 @@ function setPicture(pokemonData, speciesData)
 
 function setName(pokemonData)
 {
+    // Debug
+    console.log("Setting name.");
+
     // Getting name from retrieved JSON data 
     let pokemonName = pokemonData.name;
 
@@ -169,15 +172,43 @@ function setFlavorText(speciesData)
     document.getElementById("pokemonDescription").textContent = flavorText;
 }
 
+// Todo - Implement a "search" function where you can search for a move and if the move is there it'll be highlighted 
+// Todo - Make it so clicking on a move will output some information about it or open that move's page (first is more likely and easier) 
 function setMoves(pokemonData)
 {
     // Getting a list of moves from the JSON object
-    let movesList = [], numMoves = pokemonData.moves[0].length;
+    let movesList = [];
     for (let i = 0; i < pokemonData.moves.length; i++)
     {
         movesList.push(pokemonData.moves[i].move.name);
     }
 
+    try
+    {
+        // Modifying text formatting - Capitalizes first letters and replaces dashes w/ spaces 
+        // Iterates through each move entry 
+        for (let i = 0; i < movesList.length; i++)
+        {
+            // Capitalizing first letter
+            movesList[i] = movesList[i].charAt(0).toUpperCase() + movesList[i].slice(1, movesList[i].length);
+
+            // Iterates through for dashes, and if one is found replace w/ a space and capitalize next letter 
+            for (let j = 0; j < movesList[i].length; j++)
+            {
+                if (movesList[i].charAt(j) === "-")
+                {
+                    // This will technically run into an indexOutOfBounds error if the second word is one character long but should be fine otherwise 
+                    movesList[i] = movesList[i].slice(0, j) + " " + movesList[i].charAt(j + 1).toUpperCase() + movesList[i].slice(j + 2, movesList[i].length);
+                }
+            }
+        }
+    }
+
+    catch (err)
+    {
+        console.log("Text Formatting Error in movesList: " + err);
+    }
+    
     /* Adding them onto the DOM list */
     let listHeader = document.getElementById("skillsList");
     
