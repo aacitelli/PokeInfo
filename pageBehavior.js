@@ -111,6 +111,7 @@ function updatePokemonData(pokemonData)
 function updateSpeciesData(speciesData)
 {
     setFlavorText(speciesData);
+    setEvolutionData(speciesData);
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
@@ -331,6 +332,11 @@ function setAbilityData(abilityData)
     abilityContainer.appendChild(description);
 
     parent.appendChild(abilityContainer);
+}
+
+function setEvolutionData(speciesData)
+{
+    
 }
 
 // Trying to de-clutter code a bit 

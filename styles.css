@@ -92,34 +92,25 @@
         overflow: auto;
     }
 
-    #selectionContainer 
+    #selectionContainer
     {
-        text-align: center;
-        margin-top: 20px;
+        width: 100%;
     }
 
+    /* Selects the randomization button */
     #selectionContainer > button
     {
-        display: inline-block;
-        background: white;
-        border: 1px black solid;
-        padding: 10px;
-        text-align: center;     
-        width: 100px;   
+        height: 50px;
+        width: 200px;
+        background: rgb(200, 200, 200);
     }
 
     #selectionContainer > input 
     {
-        display: inline-block;
-        background: white;
-        border: 1px black solid;
+        width: calc(100% - 200px - 4px);
+        height: 50px;
+        background-color: white;
         padding: 10px;
-
-        /* Todo - Figure out why I need the 4px here */
-        width: calc(100% - 100px - 4px); 
-
-        /* Todo - Figure out why making height greater than this makes selection box things wonky */
-        height: 100%;
     }
 
     .possibleMove
@@ -165,35 +156,33 @@
         background-color: inherit;
     }
 
-    .evolutionBox  
-    {
-        display: inline-block;
-        padding: 10px;
-        text-align: center;
-        border: 1px black solid;
-        background-color: white;
-    }
-
-    .evolutionImage
-    {
-        background-color: inherit;
-    }
-
-    .evolutionName
-    {
-        background-color: inherit;
-    }
-
-    #evolvedFromContainer, #evolvesToContainer
-    {
-        display: inline-block;
-    }
+    #
 }
 
 /* Extra Small Devices, Phones */ 
 @media only screen and (min-width : 480px)
 {
+    #evolutionChainInnerContainer > div
+    {
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        border: 1px black solid;
+    }
 
+    .evolutionBox > img 
+    {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .evolutionArrow > img
+    {
+        width: 25px;
+        height: 25px;
+
+        margin: auto 0;
+    }
 }
 
 /* Small Devices, Tablets */
