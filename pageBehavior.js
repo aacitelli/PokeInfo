@@ -261,7 +261,19 @@ function setStats(pokemonData)
         image.classList.toggle("statImage");
 
         let name = document.createElement("h4");
-        name.textContent = pokemonData.stats[i].stat.name;        
+        name.textContent = pokemonData.stats[i].stat.name;   
+
+        // These are both workarounds for the container becoming taller because the text is too long
+        if (name.textContent === "special-attack")
+        {
+            name.textContent = "spcl-atk";
+        }   
+
+        if (name.textContent === "special-defense")
+        {
+            name.textContent = "spcl-def";
+        }
+
         name.textContent = capitalizeAndRemoveDashes(name.textContent);
         name.classList.toggle("statName");
 

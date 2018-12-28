@@ -126,6 +126,7 @@
         background-color: white;
     }
 
+    /* Todo - Fix the stacking that occurs in special defense and attack b/c there's too many characters */
     .abilityContainer
     {
         margin-bottom: 20px;
