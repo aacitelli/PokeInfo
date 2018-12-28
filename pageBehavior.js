@@ -8,67 +8,52 @@ document.addEventListener("DOMContentLoaded", function()
 // This function retrieves all the relevant data needed to fill out every field on the webpage 
 function getPokemon(input)
 {
-    // Figuring out which mode to run the function in ("Random" vs. a specified Pokemon)
-    let searchQuery = input;
-
     if (input.toLowerCase() ===  "random")
     {
-        searchQuery = Math.floor(Math.random() * 802 + 1).toString();
+        input = Math.floor(Math.random() * 802 + 1).toString();
     }
-    
-    let pokemonDataOK = true;
+
+    let pokemonData, pokemonDataOK = true;
 
     // Getting pokemon data 
-    // Debug
-    console.log("Getting pokemon data from URL: " + "https://pokeapi.co/api/v2/pokemon/" + searchQuery + "/");
+    console.log("Pokemon Data URL: " + "https://pokeapi.co/api/v2/pokemon/" + input + "/"); // Debug
 
     // Getting pokemonData
-    // searchQuery is either a random pokemon's number or the pokemon's name if the user put one in 
-    fetch("https://pokeapi.co/api/v2/pokemon/" + searchQuery + "/")    
-    .then(function(pokemonDataResponse)
-    {
-        // Todo - Convert this to something that works across more browsers (response.ok has really meh support cross-browser)
-        if (!pokemonDataResponse.ok)
+    fetch("https://pokeapi.co/api/v2/pokemon/" + input + "/")    
+    .then(function(response)
+    {     
+        if (!response.ok)
         {
-            console.log("Pokemon Response: Fail. Throwing error.");
-            throw new Error("HTTP Error " + pokemonDataResponse.status);
-        }
+            // Only should realistically enter here whenever the user inputs a nonvalid pokemon name 
+            document.getElementById("pokemonName").textContent = "Pokemon Not Found.";
+            document.getElementById("pokemonDescription").textContent = "Please revise your search."; 
 
-        return pokemonDataResponse.json();
+            // This will go to the catch             
+            throw new Error("Pokemon Data Retrieval Error - HTTP Code " + response.status);   
+        }   
+
+        return response.json();       
     })
     .then(function(pokemonData)
-    {        
-        updatePokemonData(pokemonData);
-
-        
-    })    
-    .catch(function(err)
+    {          
+        updatePokemonData(pokemonData);      
+        return pokemonData;
+    })
+    .then(function(pokemonData)
     {
-        // Todo - Figure out how to only enter this catch if there's an error with the pokemon data and not other stuff nested in here 
-        console.log("Catch of pokemonData retrieval entered. Error: " + err);
-        document.getElementById("pokemonName").textContent = "Pokemon Not Found.";
-        document.getElementById("pokemonDescription").textContent = "Please revise your search.";
-    });
-    
-    // Getting data that's dependent on the pokemon data
-    // I'm not nesting this because that makes error reporting a lot harder 
-    if (pokemonDataOK)
-    {
-        // Debug
-        console.log("Getting species data from URL: " + pokemonData.species.url);
+        // IMPORTANT NOTE: This doesn't have to be in a separate then(), this just makes it easier for me to organize and read. Performance impact is basically nil  
+        console.log("Species Data URL: " + pokemonData.species.url); // Debug 
 
-        /* Note - The inner data types aren't nested b/c they don't depend on each other, only the original pokemon data */
-        // Getting speciesData
+        /* Getting species data */
         fetch(pokemonData.species.url)
-        .then(function(speciesDataResponse)
+        .then(function(response)
         {
-            if (!speciesDataResponse.ok)
+            if (!response.ok)
             {
-                console.log("Species Response: Fail. Throwing error.");
-                throw new Error("HTTP Error " + speciesDataResponse.status);
+                throw new Error("Species Data Retrieval Error - HTTP Error Code " + response.status);
             }
 
-            return speciesDataResponse.json();
+            return response.json();
         })
         .then(function(speciesData)
         {
@@ -77,25 +62,25 @@ function getPokemon(input)
         })
         .catch(function(err)
         {
-            console.log("Failed to fetch species data. Error: " + err);
+            console.log(err);
         });
 
+        /*
         // Getting the data for each ability and calling the ability update function for each
         for (let i = 0; i < pokemonData.abilities.length; i++)
         {
             // Debug 
-            console.log("Getting ability data from URL: " + pokemonData.abilities[i].move.url);
+            console.log("Getting ability data from URL " + pokemonData.abilities[i].move.url);
 
             fetch(pokemonData.abilities[i].move.url)
-            .then(function(abilityDataResponse)
+            .then(function(response)
             {
-                if (!abilityDataResponse.ok)
+                if (!response.ok)
                 {
-                    console.log("Ability Response: Fail. Throwing error.");
-                    throw new Error("HTTP Error " + abilityDataResponse.status);
+                    throw new Error("Ability Data Retrieval Error - HTTP Error Code " + response.status);
                 }
 
-                return abilityDataResponse.json();
+                return response.json();
             })
             .then(function(abilityData)
             {
@@ -103,10 +88,16 @@ function getPokemon(input)
             })
             .catch(function(err)
             {
-                console.log("Failed to fetch ability data. Error: " + err);
+                console.log(err);
             });
-        }   
-    }
+        }    
+        */
+    })    
+    .catch(function(err)
+    {
+        pokemonDataOK = false;
+        console.log(err);       
+    });
 }
 
 // Updates any fields that use pokemonData 
@@ -138,9 +129,6 @@ function setPicture(pokemonData, speciesData)
 
 function setName(pokemonData)
 {
-    // Debug
-    console.log("Setting name.");
-
     // Getting name from retrieved JSON data 
     let pokemonName = pokemonData.name;
 
@@ -183,30 +171,22 @@ function setMoves(pokemonData)
         movesList.push(pokemonData.moves[i].move.name);
     }
 
-    try
+    // Modifying text formatting - Capitalizes first letters and replaces dashes w/ spaces 
+    // Iterates through each move entry 
+    for (let i = 0; i < movesList.length; i++)
     {
-        // Modifying text formatting - Capitalizes first letters and replaces dashes w/ spaces 
-        // Iterates through each move entry 
-        for (let i = 0; i < movesList.length; i++)
-        {
-            // Capitalizing first letter
-            movesList[i] = movesList[i].charAt(0).toUpperCase() + movesList[i].slice(1, movesList[i].length);
+        // Capitalizing first letter
+        movesList[i] = movesList[i].charAt(0).toUpperCase() + movesList[i].slice(1, movesList[i].length);
 
-            // Iterates through for dashes, and if one is found replace w/ a space and capitalize next letter 
-            for (let j = 0; j < movesList[i].length; j++)
+        // Iterates through for dashes, and if one is found replace w/ a space and capitalize next letter 
+        for (let j = 0; j < movesList[i].length; j++)
+        {
+            if (movesList[i].charAt(j) === "-")
             {
-                if (movesList[i].charAt(j) === "-")
-                {
-                    // This will technically run into an indexOutOfBounds error if the second word is one character long but should be fine otherwise 
-                    movesList[i] = movesList[i].slice(0, j) + " " + movesList[i].charAt(j + 1).toUpperCase() + movesList[i].slice(j + 2, movesList[i].length);
-                }
+                // This will technically run into an indexOutOfBounds error if the second word is one character long but should be fine otherwise 
+                movesList[i] = movesList[i].slice(0, j) + " " + movesList[i].charAt(j + 1).toUpperCase() + movesList[i].slice(j + 2, movesList[i].length);
             }
         }
-    }
-
-    catch (err)
-    {
-        console.log("Text Formatting Error in movesList: " + err);
     }
     
     /* Adding them onto the DOM list */
@@ -236,7 +216,6 @@ document.getElementById("randomizeButton").addEventListener("click", function()
 // Fired when ANY key is pressed  
 document.getElementById("textInput").addEventListener("keypress", function (e) 
 {
-    console.log("Event listener fired");
     var key = e.which || e.keyCode;
 
     if (key === 13)
