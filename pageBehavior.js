@@ -13,8 +13,6 @@ function getPokemon(input)
         input = Math.floor(Math.random() * 802 + 1).toString();
     }
 
-    let pokemonData, pokemonDataOK = true;
-
     // Getting pokemon data 
     console.log("Pokemon Data URL: " + "https://pokeapi.co/api/v2/pokemon/" + input + "/"); // Debug
 
@@ -93,7 +91,9 @@ function getPokemon(input)
     })
     .catch(function(err)
     {
-        pokemonDataOK = false;
+        document.getElementById("pokemonImage").src = "";
+        document.getElementById("pokemonName").textContent = "Pokemon Not Found.";
+        document.getElementById("pokemonDescription").textContent = "Please check your spelling.";
         console.log(err);       
     });
 }
@@ -203,7 +203,7 @@ function setStats(pokemonData)
 
     // Loops through each stat and adds it to the page 
     for (let i = 0; i < pokemonData.stats.length; i++)
-    {
+    {        
         let name = document.createElement("span");
         name.textContent = pokemonData.stats[i].stat.name;        
         name.textContent = capitalizeAndRemoveDashes(name.textContent);

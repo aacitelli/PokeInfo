@@ -6,7 +6,7 @@
     margin: 0;
 
     /* Basically Slate Gray */
-    background-color: gray;
+    background-color: rgb(200, 200, 200);
 
     box-sizing: border-box;
 }
@@ -129,6 +129,33 @@
     .abilityContainer
     {
         margin-bottom: 20px;
+    }
+
+    .statContainer
+    {
+        display: inline-block;
+        width: calc(100% / 6 - 4px);
+        padding: 10px;
+        border: 1px black solid;
+        background-color: white;
+        text-align: center;
+    }
+
+    .statImage
+    {
+        width: 30px;
+        height: 30px;
+        background-color: inherit;
+    }
+
+    .statName
+    {
+        background-color: inherit;
+    }
+
+    .statValue
+    {
+        background-color: inherit;
     }
 }
 
