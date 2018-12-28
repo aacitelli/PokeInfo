@@ -104,6 +104,7 @@ function updatePokemonData(pokemonData)
     setPicture(pokemonData);
     setName(pokemonData);
     setMoves(pokemonData);
+    setStats(pokemonData);
 }
 
 // Updates any fields that use the move data 
@@ -192,6 +193,36 @@ function setMoves(pokemonData)
     }
 }
 
+// Todo - Make the CSS for this look better - Add icons and make it horizontal and all that good stuff 
+function setStats(pokemonData)
+{
+    let parent = document.getElementById("innerStatsContainer");
+
+    // Wiping last ones
+    while (parent.firstChild) { parent.removeChild(parent.firstChild) }
+
+    // Loops through each stat and adds it to the page 
+    for (let i = 0; i < pokemonData.stats.length; i++)
+    {
+        let name = document.createElement("span");
+        name.textContent = pokemonData.stats[i].stat.name;        
+        name.textContent = capitalizeAndRemoveDashes(name.textContent);
+        name.textContent = name.textContent + ": ";
+
+        // Todo - Use css for this stuff, it's a little cleaner and more easily modifiable 
+        name.style.fontWeight = "bold";
+
+        let value = document.createElement("span");
+        value.textContent = pokemonData.stats[i].base_stat;        
+
+        parent.appendChild(name);
+        parent.appendChild(value);
+
+        // Todo - Figure out a better, less "hacky" way to do this 
+        parent.appendChild(document.createElement("div")); // Adding a newline
+    }
+}
+
 function removePreviousAbilityData()
 {
     let parent = document.getElementById("innerAbilitiesContainer");
@@ -201,6 +232,10 @@ function removePreviousAbilityData()
 // Takes JSON data for a single ability and adds it to the page via DOM 
 function setAbilityData(abilityData)
 {    
+    // Todo - Alphabetize the abilities (probably technically best to do this DURING when they're added, but probably much easier)
+    // and barely less efficient to do it at the end. Pokemon have a few abilities max so performance difference is probably on the scale
+    // of fractions of a millisecond anyway 
+    
     // The three pieces of information necessary for current move 
     let title = document.createElement("h3");    
     let description = document.createElement("p");
