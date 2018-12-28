@@ -123,6 +123,7 @@
         border: 1px black solid;
         display: inline-block;
         margin: 2px;
+        background-color: white;
     }
 }
 
