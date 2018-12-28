@@ -201,25 +201,79 @@ function setStats(pokemonData)
     // Wiping last ones
     while (parent.firstChild) { parent.removeChild(parent.firstChild) }
 
+    // Todo - Figure out how to modify the order that these are presented in b/c the order PokeAPI presents them in is hella nonintuitive
     // Loops through each stat and adds it to the page 
     for (let i = 0; i < pokemonData.stats.length; i++)
     {        
-        let name = document.createElement("span");
+        let container = document.createElement("div");
+        container.classList.toggle("statContainer");
+
+        let image = document.createElement("img");
+
+        // Which sprite gets used depends on the name of the stat 
+        // These images are probably copyrighted but w/e, this is a personal project
+        switch(pokemonData.stats[i].stat.name)
+        {
+            case "hp":
+            {
+                image.src = "http://www.clker.com/cliparts/M/u/b/H/w/K/red-plus-hi.png";
+                break;
+            }
+
+            case "attack":
+            {
+                image.src = "https://cdn1.iconfinder.com/data/icons/unigrid-military/60/002_military_battle_attack_swords-512.png";
+                break;
+            }
+            
+            case "defense":
+            {
+                image.src = "https://cdn3.iconfinder.com/data/icons/common-4/24/ui-49-512.png";
+                break;
+            }
+
+            case "speed":
+            {
+                image.src = "https://static.thenounproject.com/png/12193-200.png";
+                break;
+            }
+
+            case "special-attack":
+            {
+                image.src = "https://cdn3.iconfinder.com/data/icons/game-play/512/gaming-game-play-multimedia-console-18-512.png";
+                break;
+            }
+
+            case "special-defense":
+            {
+                image.src = "https://cdn2.iconfinder.com/data/icons/seo-and-marketing-glyph-3/24/18-512.png";
+                break;
+            }
+
+            // Debug
+            default:
+            {
+                console.error("Couldn't find picture associated with that stat.");
+                break;
+            }
+        }        
+
+        image.classList.toggle("statImage");
+
+        let name = document.createElement("h4");
         name.textContent = pokemonData.stats[i].stat.name;        
         name.textContent = capitalizeAndRemoveDashes(name.textContent);
-        name.textContent = name.textContent + ": ";
+        name.classList.toggle("statName");
 
-        // Todo - Use css for this stuff, it's a little cleaner and more easily modifiable 
-        name.style.fontWeight = "bold";
+        let value = document.createElement("p");
+        value.textContent = pokemonData.stats[i].base_stat;    
+        value.classList.toggle("statValue"); 
 
-        let value = document.createElement("span");
-        value.textContent = pokemonData.stats[i].base_stat;        
+        container.appendChild(image);
+        container.appendChild(name);
+        container.appendChild(value);
 
-        parent.appendChild(name);
-        parent.appendChild(value);
-
-        // Todo - Figure out a better, less "hacky" way to do this 
-        parent.appendChild(document.createElement("div")); // Adding a newline
+        parent.appendChild(container);
     }
 }
 
