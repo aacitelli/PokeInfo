@@ -25,7 +25,16 @@
         <!-- Randomize Button -->
         <button id="randomizeButton">Random Pokemon</button>  
 
-        <input type="text" id="textInput" placeholder="Type a name and hit enter...">
+
+        <!-- Todo - Implement this. Figured out I need to do evolutions before this b/c it's much more important - ->
+        <select id="searchType">
+            <option value="Pokemon">Pokemon</option>
+            <option value="Move">Move</option>
+            <option value="Item">Item</option>
+            <option value="Berry">Berry</option> -->
+        </select>
+
+        <input type="text" id="textInput" placeholder="Or type a pokemon name and hit enter...">
 
       </div>
       
@@ -33,16 +42,16 @@
       <div id="introContainer">
 
         <!-- The Picture of the Pokemon -->
-        <img id="pokemonImage" src="https://cdn.bulbagarden.net/upload/thumb/3/36/132Ditto.png/250px-132Ditto.png">
+        <img id="pokemonImage" width="200px" src="https://cdn.bulbagarden.net/upload/thumb/3/36/132Ditto.png/250px-132Ditto.png">
 
         <!-- Container that holds name and description -->
         <div id="nameDescriptContainer">
 
           <!-- The Pokemon's Name -->
-          <h1 style="font-size: 36px;" id="pokemonName">Loading...</h1>
+          <h1 id="pokemonName">Loading...</h1>
 
           <!-- Description of Pokemon -->
-          <p style="font-size: 20px;" id="pokemonDescription">Please be patient while the server retrieves information.</p>
+          <p id="pokemonDescription">Please be patient while the server retrieves information.</p>
 
         </div>
             
@@ -75,6 +84,42 @@
 
         <!-- Needs to be another container b/c of how I delete previous pokemons' abilities in the JS -->
         <div id="innerAbilitiesContainer"></div>
+
+      </div>  
+
+      <div id="evolutionContainer">
+
+        <h1>Evolution</h1>
+
+        <!-- Needs to be another container b/c of how I delete previous pokemons' abilities in the JS -->
+        <div id="innerEvolutionContainer">
+
+          <div id="evolvedFromContainer">
+
+            <h2>Evolved From:</h2>
+
+            <div class="evolutionBox">
+
+              <img class="evolutionImage" width="200px" height="200px" src="https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/1.png?raw=true">
+              <p class="evolutionName">Blooper</p>
+
+            </div>            
+
+          </div>
+
+          <div id="evolvesToContainer">
+
+            <h2>Evolves To</h2> 
+            <div class="evolutionBox">
+
+            <img class="evolutionImage" width="200px" height="200px" src="https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/10003.png?raw=true">
+            <p class="evolutionName">MeeMaw   </p>
+
+            </div>  
+
+          </div>  
+          
+        </div>
 
       </div>  
 
