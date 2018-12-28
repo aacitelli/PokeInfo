@@ -1,3 +1,4 @@
+/* Todo - Fix wonky formatting that happens before the data gets actually populated from the server */
 /* Custom, iPhone Retina */ 
 *
 {
@@ -113,7 +114,6 @@
 
         /* Todo - Figure out why I need the 4px here */
         width: calc(100% - 100px - 4px); 
-        height:        
     }
 
     .possibleMove
@@ -124,6 +124,11 @@
         display: inline-block;
         margin: 2px;
         background-color: white;
+    }
+
+    .abilityContainer
+    {
+        margin-bottom: 20px;
     }
 }
 

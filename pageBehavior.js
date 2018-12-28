@@ -36,15 +36,12 @@ function getPokemon(input)
     })
     .then(function(pokemonData)
     {          
-        updatePokemonData(pokemonData);      
-        return pokemonData;
-    })
-    .then(function(pokemonData)
-    {
+        updatePokemonData(pokemonData);    
+
         // IMPORTANT NOTE: This doesn't have to be in a separate then(), this just makes it easier for me to organize and read. Performance impact is basically nil  
         console.log("Species Data URL: " + pokemonData.species.url); // Debug 
 
-        /* Getting species data */
+        /* RETRIEVING SPECIES DATA */
         fetch(pokemonData.species.url)
         .then(function(response)
         {
@@ -64,7 +61,36 @@ function getPokemon(input)
         {
             console.log(err);
         });
-    })    
+
+        /* RETRIEVING DATA FOR EACH ABILITY */
+        // I can't do this in the method because that goes on a per-ability basis.
+        // This is a method b/c I don't want to put too much code in the "netcode" 
+        removePreviousAbilityData();
+
+        // Iterates through each ability that the pokemon has
+        for (let i = 0; i < pokemonData.abilities.length; i++)
+        {
+            console.log("Current Ability URL: " + pokemonData.abilities[i].ability.url);
+            fetch(pokemonData.abilities[i].ability.url)
+            .then(function(response)
+            {
+                if (!response.ok)
+                {
+                    throw new Error("Move Data Retrieval Error - HTTP Error Code " + response.status);                
+                }
+
+                return response.json();
+            })
+            .then(function(abilityData)
+            {
+                setAbilityData(abilityData);
+            })
+            .catch(function(err)
+            {
+                console.log(err);
+            });
+        }
+    })
     .catch(function(err)
     {
         pokemonDataOK = false;
@@ -174,6 +200,44 @@ function setMoves(pokemonData)
         newListElement.classList.toggle("possibleMove");
         listHeader.appendChild(newListElement);
     }
+}
+
+function removePreviousAbilityData()
+{
+    let parent = document.getElementById("innerAbilitiesContainer");
+    while (parent.firstChild) { parent.removeChild(parent.firstChild); }
+}
+
+// Takes JSON data for a single ability and adds it to the page via DOM 
+function setAbilityData(abilityData)
+{    
+    // The three pieces of information necessary for current move 
+    let title = document.createElement("h3");    
+    let description = document.createElement("p");
+    let isHidden;   // Just a boolean, not a page element 
+
+    title.textContent = abilityData.name;
+    description.textContent = abilityData.effect_entries[0].effect;
+
+    // Todo - This is technically a faulty assumption that if it's hidden for the first one it's hidden for every pokemon
+    // Probably fixable by passing in the pokemon data too (wouldn't be too complicated) and checking THAT isHidden
+    // Also fixable by iterating through the array, looking for the actual pokemon's name, though that requires the pokemon's name 
+    isHidden = abilityData.pokemon[0].is_hidden;
+
+    if (isHidden)
+    {
+        title.textContent = title.textContent + " (Hidden)";
+    }
+
+    let parent = document.getElementById("innerAbilitiesContainer");
+
+    let abilityContainer = document.createElement("div");
+    abilityContainer.classList.toggle("abilityContainer");
+
+    abilityContainer.appendChild(title);
+    abilityContainer.appendChild(description);
+
+    parent.appendChild(abilityContainer);
 }
 
 // Trying to de-clutter code a bit 
