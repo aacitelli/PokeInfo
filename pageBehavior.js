@@ -5,49 +5,95 @@ document.addEventListener("DOMContentLoaded", function()
 });
 
 // Two Modes - "Random" as input returns a random pokemon. Anything else signifies a specific name 
+// This function retrieves all the relevant data needed to fill out every field on the webpage 
 function getPokemon(input)
 {
+    // Figuring out which mode to run the function in ("Random" vs. a specified Pokemon)
     let searchQuery = input;
 
     if (input.toLowerCase() ===  "random")
     {
         searchQuery = Math.floor(Math.random() * 802 + 1).toString();
     }
+    
+    // Debug
+    console.log("Getting pokemon data from URL: " + "https://pokeapi.co/api/v2/pokemon/" + searchQuery + "/");
 
-    // Getting the pokemon data 
+    // Getting pokemonData
+    // searchQuery is either a random pokemon's number or the pokemon's name if the user put one in 
     fetch("https://pokeapi.co/api/v2/pokemon/" + searchQuery + "/")    
-    .then(function(response)
+    .then(function(pokemonDataResponse)
     {
-        if (!response.ok)
+        // Todo - Convert this to something that works across more browsers (response.ok has really meh support cross-browser)
+        if (!pokemonDataResponse.ok)
         {
             console.log("Pokemon Response: Fail. Throwing error.");
-            throw new Error("HTTP Error " + response.status);
+            throw new Error("HTTP Error " + pokemonDataResponse.status);
         }
 
-        return response.json();
+        return pokemonDataResponse.json();
     })
+
     .then(function(pokemonData)
     {        
+        updatePokemonData(pokemonData);
+
+        // Debug
+        console.log("Getting species data from URL: " + pokemonData.species.url);
+
+        /* Note - The inner data types aren't nested b/c they don't depend on each other, only the original pokemon data */
+        // Getting speciesData
         fetch(pokemonData.species.url)
-        .then(function(response2)
+        .then(function(speciesDataResponse)
         {
-            if (!response2.ok)
+            if (!speciesDataResponse.ok)
             {
                 console.log("Species Response: Fail. Throwing error.");
+                throw new Error("HTTP Error " + speciesDataResponse.status);
             }
 
-            return response2.json();
+            return speciesDataResponse.json();
         })
         .then(function(speciesData)
         {
             // Both of these objects are full of data, so can be passed
-            updatePage(pokemonData, speciesData);
+            updateSpeciesData(speciesData);
         })
         .catch(function(err)
         {
             console.log("Failed to fetch species data. Error: " + err);
         });
+
+        // Debug
+        
+        // Getting the data for each ability and calling the ability update function for each
+        for (let i = 0; i < pokemonData.abilities.length; i++)
+        {
+            // Debug 
+            console.log("Getting move data from URL: " + pokemonData.abilities[i].move.url);
+
+            fetch(pokemonData.abilities[i].move.url)
+            .then(function(abilityDataResponse)
+            {
+                if (!abilityDataResponse.ok)
+                {
+                    console.log("Ability Response: Fail. Throwing error.");
+                    throw new Error("HTTP Error " + abilityDataResponse.status);
+                }
+
+                return abilityDataResponse.json();
+            })
+            .then(function(abilityData)
+            {
+                updateAbilityData(abilityData);
+            })
+            .catch(function(err)
+            {
+                console.log("Failed to fetch ability data. Error: " + err);
+            });
+        }
     })
+    
     .catch(function(err)
     {
         document.getElementById("pokemonName").textContent = "";
@@ -55,14 +101,32 @@ function getPokemon(input)
     });
 }
 
-// This is heavily methodized because otherwise it would be one long mess and it's far easier to debug this way
-function updatePage(pokemonData, speciesData)
+// Updates any fields that use pokemonData 
+function updatePokemonData(pokemonData)
 {
-    /* All the function calls that set up the page based on the passed-in JSON data. */
-    setPicture(pokemonData, speciesData);
-    setName(pokemonData, speciesData);
-    setFlavorText(pokemonData, speciesData);
-    setMoves(pokemonData, speciesData);
+    setPicture(pokemonData);
+    setName(pokemonData);
+    setMoves(pokemonData);
+}
+
+// Updates any fields that use the move data 
+function updateSpeciesData(speciesData)
+{
+    setFlavorText(speciesData);
+}
+
+// Calls functions which need a single move's data (pretty much just one function, I'm just being consistent w/ the function calling scheme)
+function updateAbilityData(abilityData)
+{
+    // setAbilityData(abilityData);
+}
+
+function setAbilityData(abilityData)
+{
+    // Reminder - This entire function is run once for each ability present, so this is tailored to just one ability
+    let parent = document.getElementById("abilitiesContainer");
+
+    let title = abilityData
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
@@ -72,7 +136,7 @@ function setPicture(pokemonData, speciesData)
     document.getElementById("pokemonImage").src = pokemonData.sprites.front_default;    
 }
 
-function setName(pokemonData, speciesData)
+function setName(pokemonData)
 {
     // Getting name from retrieved JSON data 
     let pokemonName = pokemonData.name;
@@ -84,7 +148,7 @@ function setName(pokemonData, speciesData)
     document.getElementById("pokemonName").textContent = pokemonName;
 }
 
-function setFlavorText(pokemonData, speciesData)
+function setFlavorText(speciesData)
 {
     // Todo - Figure out a way of doing this w/o searching through until you find the english one 
     let flavorText, flag = false, currIndex = 0;
@@ -105,7 +169,7 @@ function setFlavorText(pokemonData, speciesData)
     document.getElementById("pokemonDescription").textContent = flavorText;
 }
 
-function setMoves(pokemonData, speciesData)
+function setMoves(pokemonData)
 {
     // Getting a list of moves from the JSON object
     let movesList = [], numMoves = pokemonData.moves[0].length;
