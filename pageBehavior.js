@@ -64,34 +64,6 @@ function getPokemon(input)
         {
             console.log(err);
         });
-
-        /*
-        // Getting the data for each ability and calling the ability update function for each
-        for (let i = 0; i < pokemonData.abilities.length; i++)
-        {
-            // Debug 
-            console.log("Getting ability data from URL " + pokemonData.abilities[i].move.url);
-
-            fetch(pokemonData.abilities[i].move.url)
-            .then(function(response)
-            {
-                if (!response.ok)
-                {
-                    throw new Error("Ability Data Retrieval Error - HTTP Error Code " + response.status);
-                }
-
-                return response.json();
-            })
-            .then(function(abilityData)
-            {
-                updateAbilityData(abilityData);
-            })
-            .catch(function(err)
-            {
-                console.log(err);
-            });
-        }    
-        */
     })    
     .catch(function(err)
     {
@@ -112,12 +84,6 @@ function updatePokemonData(pokemonData)
 function updateSpeciesData(speciesData)
 {
     setFlavorText(speciesData);
-}
-
-// Calls functions which need a single move's data (pretty much just one function, I'm just being consistent w/ the function calling scheme)
-function updateAbilityData(abilityData)
-{
-    // setAbilityData(abilityData);
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
@@ -187,7 +153,10 @@ function setMoves(pokemonData)
                 movesList[i] = movesList[i].slice(0, j) + " " + movesList[i].charAt(j + 1).toUpperCase() + movesList[i].slice(j + 2, movesList[i].length);
             }
         }
-    }
+    }   
+
+    // Sets the list equal to the alphabetized version of itself 
+    movesList = insertionSortStrings(movesList);
     
     /* Adding them onto the DOM list */
     let listHeader = document.getElementById("skillsList");
@@ -205,6 +174,34 @@ function setMoves(pokemonData)
         newListElement.classList.toggle("possibleMove");
         listHeader.appendChild(newListElement);
     }
+}
+
+// Trying to de-clutter code a bit 
+// Returns an alphabetically sorted array of whatever you passed in 
+function insertionSortStrings(movesList)
+{
+    // Alphabetizes the list 
+    let endArr = [];
+
+    // Assigning first element
+    endArr[0] = movesList[0];
+
+    // Todo - Implement a more efficient sorting algoirithm than insertion sort (which isn't awful but there are better ones available esp. for worst use time implementation)
+    // Again, there are never more than like 100ish moves so this won't take excessively long in any case 
+    for (let i = 1; i < movesList.length; i++)
+    {
+        for (let j = 0; j < endArr.length; j++)
+        {
+            if (movesList[i].toLowerCase() < endArr[j].toLowerCase())
+            {
+                // Splice syntax for simple insertion: splice(index, 0, item)
+                endArr.splice(j, 0, movesList[i]); 
+                break;    // Just breaks out of inner loop indicating current element is sorted             
+            }
+        }        
+    }
+
+    return endArr;
 }
 
 // This button just calls the retrieval function again
