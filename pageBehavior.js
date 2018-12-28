@@ -167,18 +167,8 @@ function setMoves(pokemonData)
     // Iterates through each move entry 
     for (let i = 0; i < movesList.length; i++)
     {
-        // Capitalizing first letter
-        movesList[i] = movesList[i].charAt(0).toUpperCase() + movesList[i].slice(1, movesList[i].length);
-
-        // Iterates through for dashes, and if one is found replace w/ a space and capitalize next letter 
-        for (let j = 0; j < movesList[i].length; j++)
-        {
-            if (movesList[i].charAt(j) === "-")
-            {
-                // This will technically run into an indexOutOfBounds error if the second word is one character long but should be fine otherwise 
-                movesList[i] = movesList[i].slice(0, j) + " " + movesList[i].charAt(j + 1).toUpperCase() + movesList[i].slice(j + 2, movesList[i].length);
-            }
-        }
+        // Use a method here because it's used elsewhere on the website (the abilities, at least)
+        movesList[i] = capitalizeAndRemoveDashes(movesList[i]);
     }   
 
     // Sets the list equal to the alphabetized version of itself 
@@ -217,6 +207,8 @@ function setAbilityData(abilityData)
     let isHidden;   // Just a boolean, not a page element 
 
     title.textContent = abilityData.name;
+    title.textContent = capitalizeAndRemoveDashes(title.textContent);
+
     description.textContent = abilityData.effect_entries[0].effect;
 
     // Todo - This is technically a faulty assumption that if it's hidden for the first one it's hidden for every pokemon
@@ -266,6 +258,24 @@ function insertionSortStrings(movesList)
     }
 
     return endArr;
+}
+
+function capitalizeAndRemoveDashes(str)
+{
+    // Capitalizing first letter
+    str = str.charAt(0).toUpperCase() + str.slice(1, str.length);
+
+    // Iterates through for dashes, and if one is found replace w/ a space and capitalize next letter 
+    for (let j = 0; j < str.length; j++)
+    {
+        if (str.charAt(j) === "-")
+        {
+            // This will technically run into an indexOutOfBounds error if the second word is one character long but should be fine otherwise 
+            str = str.slice(0, j) + " " + str.charAt(j + 1).toUpperCase() + str.slice(j + 2, str.length);
+        }
+    }
+
+    return str;
 }
 
 // This button just calls the retrieval function again
