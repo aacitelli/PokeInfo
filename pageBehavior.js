@@ -24,7 +24,7 @@ function getPokemon(input)
         {
             // Only should realistically enter here whenever the user inputs a nonvalid pokemon name 
             document.getElementById("pokemonName").textContent = "Pokemon Not Found.";
-            document.getElementById("pokemonDescription").textContent = "Please revise your search."; 
+            document.getElementById("pokemonDescription").textContent = "Please revise uijyour search."; 
 
             // This will go to the catch             
             throw new Error("Pokemon Data Retrieval Error - HTTP Code " + response.status);   
@@ -492,24 +492,6 @@ async function setEvolutionData(pokemonData, evolutionData)
                 i++;
             }
         }        
-    }
-
-    // Looping through the list and searching for which one is the current pokemon and therefore needs highlighted 
-    let list = document.getElementById("evolutionChainInnerContainer").childNodes;
-
-    for (let i = 0; i < list.length; i++)
-    {
-        if (list[i][1] === pokemonData.name)
-        {
-            // Looping through them all and removing border 
-            for (let j = 0; j < list.length; j++)
-            {
-                list[j].style.border = "1px black solid";
-            }
-
-            list[i].style.border = "5px black solid";
-            break;
-        }
     }
 }
 
