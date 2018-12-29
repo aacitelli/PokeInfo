@@ -70,7 +70,7 @@ function getPokemon(input)
             })
             .then(function(data)
             {
-                updateEvolutionData(data);
+                updateEvolutionData(pokemonData, data);
             })
             .catch(function(err)
             {
@@ -160,9 +160,9 @@ function updateSpeciesData(speciesData)
     setFlavorText(speciesData);
 }
 
-function updateEvolutionData(evolutionData)
+function updateEvolutionData(pokemonData, evolutionData)
 {
-    setEvolutionData(evolutionData);
+    setEvolutionData(pokemonData, evolutionData);
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
@@ -386,7 +386,7 @@ function setAbilityData(abilityData)
 }
 
 // Todo - Make it so I don't have to pass pokemonData in here b/c it sorta breaks a standard 
-async function setEvolutionData(evolutionData)
+async function setEvolutionData(pokemonData, evolutionData)
 {
     // Todo - Try and minimize the amount of fresh declarations...
     // I could keep reusing variables but it's a little complicated to make sure class application behaves correctly
@@ -494,7 +494,23 @@ async function setEvolutionData(evolutionData)
         }        
     }
 
-    // Todo after I finish all this promise stuff - Highlighting the box of the current pokemon 
+    // Looping through the list and searching for which one is the current pokemon and therefore needs highlighted 
+    let list = document.getElementById("evolutionChainInnerContainer").childNodes;
+
+    for (let i = 0; i < list.length; i++)
+    {
+        if (list[i][1] === pokemonData.name)
+        {
+            // Looping through them all and removing border 
+            for (let j = 0; j < list.length; j++)
+            {
+                list[j].style.border = "1px black solid";
+            }
+
+            list[i].style.border = "5px black solid";
+            break;
+        }
+    }
 }
 
 // Trying to de-clutter code a bit 
