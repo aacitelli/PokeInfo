@@ -54,10 +54,32 @@ function getPokemon(input)
         {
             // Both of these objects are full of data, so can be passed
             updateSpeciesData(speciesData);
+
+            // Evolution tree data retrieval 
+            console.log("Evolution Data URL: " + speciesData.evolution_chain.url);
+
+            fetch(speciesData.evolution_chain.url)
+            .then(function(response)
+            {
+                if (!response.ok)
+                {
+                    throw new Error("Evolution Data Retrieval Error - HTTP Error Code " + response.status);
+                }
+
+                return response.json();
+            })
+            .then(function(data)
+            {
+                updateEvolutionData(data);
+            })
+            .catch(function(err)
+            {
+                console.error(err);
+            })
         })
         .catch(function(err)
         {
-            console.log(err);
+            console.error(err);
         });
 
         /* RETRIEVING DATA FOR EACH ABILITY */
@@ -85,7 +107,7 @@ function getPokemon(input)
             })
             .catch(function(err)
             {
-                console.log(err);
+                console.error(err);
             });
         }
     })
@@ -94,7 +116,32 @@ function getPokemon(input)
         document.getElementById("pokemonImage").src = "";
         document.getElementById("pokemonName").textContent = "Pokemon Not Found.";
         document.getElementById("pokemonDescription").textContent = "Please check your spelling.";
-        console.log(err);       
+        console.error(err);       
+    });
+}
+
+// This function gets you a nice, cold, refreshing Sprite out of the fridge
+// Seriously though, this returns a URL of a sprite of the passed-in pokemon name  
+async function getSprite(pokemonName)
+{
+    // The user can't straight up run this function but toLowerCase is just incase I pass in something capitalized by accident 
+    return fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonName + "/") 
+    .then(function(response)
+    {
+        if (!response.ok)
+        {
+            throw new Error("Sprite Retrieval Error - HTTP Code " + response.status);
+        }
+
+        return response.json();
+    })
+    .then(function(data)
+    {
+        return data.sprites.front_default;        
+    })
+    .catch(function(err)
+    {
+        console.error(err);
     });
 }
 
@@ -111,11 +158,15 @@ function updatePokemonData(pokemonData)
 function updateSpeciesData(speciesData)
 {
     setFlavorText(speciesData);
-    setEvolutionData(speciesData);
+}
+
+function updateEvolutionData(evolutionData)
+{
+    setEvolutionData(evolutionData);
 }
 
 // Both sets of data are passed b/c it's almost zero footprint and very easy to maintain 
-function setPicture(pokemonData, speciesData)
+function setPicture(pokemonData)
 {
     // Todo - Figure out a way to get a higher resolution picture
     document.getElementById("pokemonImage").src = pokemonData.sprites.front_default;    
@@ -334,9 +385,116 @@ function setAbilityData(abilityData)
     parent.appendChild(abilityContainer);
 }
 
-function setEvolutionData(speciesData)
+// Todo - Make it so I don't have to pass pokemonData in here b/c it sorta breaks a standard 
+async function setEvolutionData(evolutionData)
 {
-    
+    // Todo - Try and minimize the amount of fresh declarations...
+    // I could keep reusing variables but it's a little complicated to make sure class application behaves correctly
+    // Adding the lowest evolution level (s)  
+    let parent = document.getElementById("evolutionChainInnerContainer");
+
+    // Removing previous evolution chains
+    while (parent.firstChild) { parent.removeChild(parent.firstChild) }
+
+    let boxContainer = document.createElement("div");
+    boxContainer.classList.toggle("evolutionBox");
+
+    let currentImage = document.createElement("img");
+    let currentName = document.createElement("p");
+
+    currentImage.src = await getSprite(evolutionData.chain.species.name);
+    currentName.textContent = capitalizeAndRemoveDashes(evolutionData.chain.species.name);
+
+    boxContainer.appendChild(currentImage);
+    boxContainer.appendChild(currentName);
+
+    parent.appendChild(boxContainer);    
+
+    // Second Level Evolutions
+    if (evolutionData.chain.evolves_to.length > 0)
+    {
+        // Inserting the horizontal arrow
+        let arrow = document.createElement("div");
+        arrow.classList.toggle("evolutionArrow");
+
+        let image = document.createElement("img");
+        image.src = "http://www.stickpng.com/assets/images/585e4773cb11b227491c3385.png";
+        arrow.appendChild(image);
+
+        parent.appendChild(arrow);
+
+        let i = 0; 
+
+        // Each loop represents one pokemon it's going through 
+        while (i < evolutionData.chain.evolves_to.length)
+        {
+            let currentImage = document.createElement("img");
+            let currentName = document.createElement("p");
+
+            // JavaScript is wack 
+            currentImage.src = await getSprite(evolutionData.chain.evolves_to[i].species.name);
+            currentName.textContent = capitalizeAndRemoveDashes(evolutionData.chain.evolves_to[i].species.name);
+
+            let boxContainer = document.createElement("div");
+            boxContainer.classList.toggle("evolutionBox");
+
+            boxContainer.appendChild(currentImage);
+            boxContainer.appendChild(currentName);
+
+            parent.appendChild(boxContainer);
+
+            i++;
+        }
+    }    
+
+    // PLEASE WORK TRY B/C THIS IS GOING TO BE LIVING HELL TO DEBUG OTHERWISE 
+
+    // Third Level Evolutions
+    // Checking if it's even valid to check for a third    
+    if (evolutionData.chain.evolves_to.length > 0)
+    {
+        // Yes, I know it's possible to do a compound if statement, but this is more readable imo 
+        // Checking for a third
+        if (evolutionData.chain.evolves_to[0].evolves_to.length > 0)
+        {   
+            // Inserting the horizontal arrow 
+            arrow = document.createElement("div");
+            arrow.classList.toggle("evolutionArrow");
+
+            image = document.createElement("img");
+            image.src = "http://www.stickpng.com/assets/images/585e4773cb11b227491c3385.png";
+            arrow.appendChild(image);
+
+            parent.appendChild(arrow);
+
+            // Same procedure as above except w/ slightly modified indexing scheme 
+            let i = 0; 
+
+            // Each loop represents one pokemon it's going through 
+            while (i < evolutionData.chain.evolves_to[0].evolves_to.length)
+            {
+                let currentImage = document.createElement("img");
+                let currentName = document.createElement("p");
+
+                // JavaScript is wack 
+                // Making the assumption that all second level evolutions will result in the same set of third level evolutions
+                currentImage.src = await getSprite(evolutionData.chain.evolves_to[0].evolves_to[i].species.name);
+                currentName.textContent = capitalizeAndRemoveDashes(evolutionData.chain.evolves_to[0].evolves_to[i].species.name);
+
+                let boxContainer = document.createElement("div");
+                boxContainer.classList.toggle("evolutionBox");
+
+                boxContainer.appendChild(currentImage);
+                boxContainer.appendChild(currentName);
+
+                parent.appendChild(boxContainer);
+
+                i++;
+            }
+        }        
+    }
+
+    // Todo after I finish all this promise stuff - Highlighting the box of the current pokemon 
 }
 
 // Trying to de-clutter code a bit 
@@ -384,6 +542,8 @@ function capitalizeAndRemoveDashes(str)
 
     return str;
 }
+
+
 
 // This button just calls the retrieval function again
 document.getElementById("randomizeButton").addEventListener("click", function()

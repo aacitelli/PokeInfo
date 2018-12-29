@@ -18,6 +18,10 @@ PokeAPI returns a lot of URLs in their JSON data, which I was able to use to get
 
 I learned a lot about what promises are, when they need to be implemented, and how to actually implement them effectively, mostly with respect to fetch(). I was able to use them to only request certain data whenever other data came in, due to how one set of data required data from the other to be obtained. 
 
+### ***Asynchronous Processes***
+
+I got way deeper into asynchronous processes and how they work than I thought I would. I ended up having to implement the "async" and "await" keywords for some of my data and got a fair understanding of them. 
+
 ### ***JSON data***
 
 I learned a lot about JSON data and the minor differences between it and actual JavaScript objects. I got very good at being able to look at documentation and implement how to get a single piece of data from read-in JSON data, which was basically the foundation for this entire project. 
