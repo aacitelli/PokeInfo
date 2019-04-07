@@ -6,7 +6,7 @@ All source code is obviously in this repo. When the project is finished (which i
 
 
 #### Future Work
-This project is still actively in development. It's not yet complete, but at this point, I've stopped learning as quickly and it's mostly just reimplementation of some stuff I've already figured out, extra features, and making the static site elements look better while remaining responsive across devices mostly via CSS. 
+This project is, for my intents and purposes, complete. I've learned all that I feel I'll learn from it, and any future work would just be implementing more categories, which is repetitive and I learn nothing from. So, I'm done with this project unless something comes up and I feel I can gain something from it.
 
 ## **What I Learned: Major Points**
 
